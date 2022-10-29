@@ -1,6 +1,7 @@
 import sqlite3
 from server.decoder import generate_key_pair
 from server.utils import format_coordinates
+from server.models import *
 
 con = sqlite3.connect("game_data.db")
 
@@ -24,7 +25,11 @@ def generate_tables():
     """
     cur.execute(query)
 
-def store_new_location(game_id, player_id, location):
+def store_new_location(
+    game_id: int,
+    player_id: int,
+    location: Location,
+):
     formatted_coordinates = format_coordinates(location.x, location.y)
     query = f"""
         UPDATE GAME_DATA
@@ -37,13 +42,13 @@ def store_new_location(game_id, player_id, location):
     
 
 async def store_player_data(
-    game_id,
-    random_number,
-    player_id,
-    location,
-    unit_id,
+    game_id: int,
+    random_number: int,
+    player_id: int,
+    location: Location,
+    unit_id: int,
 ):
-    formatted_coordinates = format_coordinates(location["x"], location["y"])
+    formatted_coordinates = format_coordinates(location.x, location.y)
     query = f"""
         INSERT INTO GAME_DATA (GAME_ID, RANDOM_NUMBER, PLAYER_ID, COORDINATES, UNIT_ID) 
         VALUES 

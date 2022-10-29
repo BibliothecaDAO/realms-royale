@@ -23,8 +23,8 @@ async def read_item(game_id):
 
 
 @app.post("/set_location")
-async def set_location(game_id, player_id, new_location):
-    store_new_location(game_id, player_id, new_location)
+async def set_location(body: SetLocationBody):
+    store_new_location(**body)
 
 @app.get("/get_location")
 async def get_location(game_id, player_id):
@@ -42,17 +42,7 @@ async def get_unit(game_id, player_id):
 
 @app.post("/set_player_data")
 async def set_player(body: SetPlayerBody):
-    coordinates = {
-        "x": body.coordinate_x,
-        "y": body.coordinate_y
-    }
-    store_player_data(
-        body.game_id,
-        body.random_number,
-        body.player_id,
-        coordinates,
-        body.unit_id,
-    )
+    store_player_data(**body)
     # fetch players by game id, if 3 start game
     players = fetch_players(body.game_id)
     if len(players) == 3:
