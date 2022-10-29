@@ -1,6 +1,6 @@
 import sqlite3
 from server.decoder import generate_key_pair
-from server.utils import format_coordinates
+from server.utils import encode_coordinates
 from server.models import *
 
 con = sqlite3.connect("game_data.db")
@@ -31,15 +31,16 @@ def store_new_location(
     player_id: int,
     location: Location,
 ):
-    formatted_coordinates = format_coordinates(location.x, location.y)
+    encoded_coordinates = encode_coordinates(location["x"], location["y"])
     query = f"""
         UPDATE GAME_DATA
-        SET COORDINATES = {formatted_coordinates}
+        SET COORDINATES = {encoded_coordinates}
         WHERE
             GAME_ID = {game_id}
             PLAYER_ID = {player_id}
     """
     cur.execute(query)
+    con.commit()
     
 
 async def store_player_data(
@@ -49,7 +50,7 @@ async def store_player_data(
     location: Location,
     unit_id: int,
 ):
-    formatted_coordinates = format_coordinates(location.x, location.y)
+    formatted_coordinates = encode_coordinates(location["x"], location["y"])
     query = f"""
         INSERT INTO GAME_DATA (GAME_ID, RANDOM_NUMBER, PLAYER_ID, COORDINATES, UNIT_ID) 
         VALUES 
@@ -57,8 +58,9 @@ async def store_player_data(
     """
     print(query)
     cur.execute(query)
+    con.commit()
 
-def fetch_players(game_id):
+def fetch_players(game_id: int):
     query = f"""
         SELECT PLAYER_ID FROM GAME_DATA WHERE GAME_ID={game_id}
     """
@@ -66,7 +68,7 @@ def fetch_players(game_id):
     players = cur.fetchmany()
     return players
 
-def fetch_seed(game_id):
+def fetch_seed(game_id: int):
     query = f"""
         SELECT SEED FROM GAME_KEY WHERE GAME_ID={game_id}
     """
@@ -74,7 +76,7 @@ def fetch_seed(game_id):
     seed = cur.fetchone()
     return seed
 
-def fetch_public_key(game_id):
+def fetch_public_key(game_id: int):
     query = f"""
         SELECT PUBLIC_KEY FROM GAME_KEY WHERE GAME_ID={game_id}
     """
@@ -82,7 +84,7 @@ def fetch_public_key(game_id):
     public_key = cur.fetchone()
     return public_key
 
-def fetch_private_key(game_id):
+def fetch_private_key(game_id: int):
     query = f"""
         SELECT PRIVATE_KEY FROM GAME_KEY WHERE GAME_ID={game_id}
     """
@@ -90,15 +92,21 @@ def fetch_private_key(game_id):
     private_key = cur.fetchone()
     return private_key
 
-def fetch_location(game_id, player_id):
+def fetch_location(
+        game_id: int, 
+        player_id: int
+    ):
     query = f"""
         SELECT COORDINATES FROM GAME_DATA WHERE GAME_ID={game_id} AND PLAYER_ID={player_id}
     """
     cur.execute(query)
     coordinates = cur.fetchone()
-    return coordinates
+    return coordinates[0]
 
-def fetch_unit(game_id, player_id):
+def fetch_unit(
+        game_id: int, 
+        player_id: int
+    ):
     query = f"""
         SELECT UNIT_ID FROM GAME_DATA WHERE GAME_ID={game_id} AND PLAYER_ID={player_id}
     """
@@ -106,7 +114,12 @@ def fetch_unit(game_id, player_id):
     coordinates = cur.fetchone()
     return coordinates
 
-async def start_game(game_id, random_1, random_2, random_3):
+async def start_game(
+        game_id: int, 
+        random_1: int, 
+        random_2: int, 
+        random_3: int
+    ):
     seed = random_1 * random_2 * random_3
     private_key, public_key = generate_key_pair(seed)
     query = f"""

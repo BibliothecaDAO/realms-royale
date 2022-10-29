@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from server.decoder import hash_coordinates
+from server.decoder import hash_coordinates, calculate_movable_coordinates
 from server.database import (
     fetch_seed,
     fetch_unit,
@@ -24,14 +24,22 @@ async def read_item(game_id):
 
 @app.post("/set_location")
 async def set_location(body: SetLocationBody):
-    store_new_location(**body)
+    store_new_location(**body.dict())
 
 @app.get("/get_location")
-async def get_location(game_id, player_id):
-    combined_coordinates = fetch_location(game_id, player_id)
-    seed = fetch_seed()
+async def get_location(body: GetLocationBody):
+    combined_coordinates = fetch_location(**body.dict())
+    seed = fetch_seed(body.game_id)
     hashed_coord = hash_coordinates(seed, combined_coordinates)
     return hashed_coord
+
+@app.post("/get_moveable_locations")
+async def get_movable_locations(body: GetMovableLocationsBody):
+    combined_coordinates = fetch_location(**body.dict())
+    seed = fetch_seed(body.game_id)
+    movable_coordinates = calculate_movable_coordinates(seed, combined_coordinates)
+    return (movable_coordinates)
+
 
 @app.get("/get_unit")
 async def get_unit(game_id, player_id):
@@ -42,7 +50,7 @@ async def get_unit(game_id, player_id):
 
 @app.post("/set_player_data")
 async def set_player(body: SetPlayerBody):
-    store_player_data(**body)
+    await store_player_data(**body.dict())
     # fetch players by game id, if 3 start game
     players = fetch_players(body.game_id)
     if len(players) == 3:
