@@ -20,7 +20,8 @@ def generate_tables():
         CREATE TABLE GAME_KEY
         (GAME_ID INT,
         SEED INT,
-        PRIVATE_KEY CHAR(255));
+        PRIVATE_KEY CHAR(255),
+        PUBLIC_KEY CHAR(255));
     """
     cur.execute(query)
 
@@ -47,7 +48,7 @@ async def store_player_data(
     query = f"""
         INSERT INTO GAME_DATA (GAME_ID, RANDOM_NUMBER, PLAYER_ID, COORDINATES, UNIT_ID) 
         VALUES 
-        ({game_id}, {random_number}, {player_id}, {formatted_coordinates}, {unit_id}),
+        ({game_id}, {random_number}, {player_id}, {formatted_coordinates}, {unit_id});
     """
     print(query)
     cur.execute(query)
@@ -106,7 +107,7 @@ async def start_game(game_id, random_1, random_2, random_3):
     query = f"""
         INSERT INTO GAME_KEY (GAME_ID, SEED, PRIVATE_KEY, PUBLIC_KEY) 
         VALUES 
-        ({game_id}, {private_key}, {public_key}),
+        ({game_id}, {seed}, {private_key}, {public_key});
     """
     cur.execute(query)
 
