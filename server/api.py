@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from server.decoder import hash_coordinates
 from server.database import (
+    fetch_seed,
+    fetch_unit,
     start_game,
     store_player_data,
     fetch_players,
@@ -26,8 +28,16 @@ async def set_location(game_id, player_id, new_location):
 @app.get("/get_location")
 async def get_location(game_id, player_id):
     combined_coordinates = fetch_location(game_id, player_id)
-    hashed_coord = hash_coordinates(combined_coordinates)
+    seed = fetch_seed()
+    hashed_coord = hash_coordinates(seed, combined_coordinates)
     return hashed_coord
+
+@app.get("/get_unit")
+async def get_unit(game_id, player_id):
+    unit_id = fetch_unit(game_id, player_id)
+    seed = fetch_seed()
+    hashed_unit_id = hash_coordinates(seed, unit_id)
+    return hashed_unit_id
 
 @app.post("/set_player_data")
 async def set_player(game_id, random_number, player_id, coordinate_x, coordinate_y, unit_id):
