@@ -56,7 +56,6 @@ async def store_player_data(
         VALUES 
         ({game_id}, {random_number}, {player_id}, {formatted_coordinates}, {unit_id});
     """
-    print(query)
     cur.execute(query)
     con.commit()
 

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from server.decoder import hash_coordinates, calculate_movable_coordinates
+from fastapi.middleware.cors import CORSMiddleware
 from server.database import (
     fetch_seed,
     fetch_unit,
@@ -14,6 +15,16 @@ from server.utils import decode_coordinates
 from server.models import *
 
 app = FastAPI()
+
+origins = ['*']
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/get_public_key")
 async def read_item(game_id):
