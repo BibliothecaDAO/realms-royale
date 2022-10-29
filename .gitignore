@@ -5,7 +5,7 @@ venv
 realms-royale.pem
 
 # database
-server/game_data.db
+game_data.db
 
 # utilities
 .vscode

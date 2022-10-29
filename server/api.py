@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from server.decoder import hash_coordinates, calculate_movable_coordinates
 from server.database import (
     fetch_seed,
@@ -15,8 +16,16 @@ from server.models import *
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/get_public_key")
+
+@app.post("/get_public_key")
 async def read_item(game_id):
     public_key = fetch_public_key(game_id)
     return {"public_key": public_key}
@@ -26,7 +35,7 @@ async def read_item(game_id):
 async def set_location(body: SetLocationBody):
     store_new_location(**body.dict())
 
-@app.get("/get_location")
+@app.post("/get_location")
 async def get_location(body: GetLocationBody):
     combined_coordinates = fetch_location(**body.dict())
     seed = fetch_seed(body.game_id)
@@ -41,7 +50,7 @@ async def get_movable_locations(body: GetMovableLocationsBody):
     return (movable_coordinates)
 
 
-@app.get("/get_unit")
+@app.post("/get_unit")
 async def get_unit(game_id, player_id):
     unit_id = fetch_unit(game_id, player_id)
     seed = fetch_seed()
