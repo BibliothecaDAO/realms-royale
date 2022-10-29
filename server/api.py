@@ -11,7 +11,7 @@ from server.database import (
     fetch_location
 )
 from server.utils import decode_coordinates
-from pydantic import BaseModel
+from server.models import *
 
 app = FastAPI()
 
@@ -39,14 +39,6 @@ async def get_unit(game_id, player_id):
     seed = fetch_seed()
     hashed_unit_id = hash_coordinates(seed, unit_id)
     return hashed_unit_id
-
-class SetPlayerBody(BaseModel):
-    game_id: int
-    random_number: int
-    player_id: int
-    coordinate_x: int
-    coordinate_y: int
-    unit_id: int
 
 @app.post("/set_player_data")
 async def set_player(body: SetPlayerBody):
