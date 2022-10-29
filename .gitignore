@@ -1,0 +1,11 @@
+# environments
+venv
+
+# ssh key
+hackathon-fog-project.pem
+
+# database
+server/game_data.db
+
+# utilities
+.vscode
