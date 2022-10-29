@@ -9,3 +9,5 @@ server/game_data.db
 
 # utilities
 .vscode
+
+server/__pycache__
