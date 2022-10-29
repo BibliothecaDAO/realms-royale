@@ -1,8 +1,7 @@
 import ecdsa
-from database import get_private_key
+# from database import get_private_key
 import hashlib
-import hmac
-from utils import convert_to_bytes
+from server.utils import convert_to_bytes
 
 def hash_coordinates(private_key, coordinates):
     m = hashlib.sha256()

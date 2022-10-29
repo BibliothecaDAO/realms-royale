@@ -1,28 +1,21 @@
 from fastapi import FastAPI
-import sqlite3
-from decoder import generate_key_pair
-from database import (
-    insert_data,
+from server.decoder import hash_coordinates
+from server.database import (
     start_game,
     store_player_data,
-    get_players,
-    get_public_key,
+    fetch_players,
+    fetch_public_key,
     store_new_location,
-    get_location
+    fetch_location
 )
-from utils import decode_coordinates
+from server.utils import decode_coordinates
 
 app = FastAPI()
 
 
-@app.get("/block_time")
-async def read_item():
-    return {"block_time": 100}
-
-
 @app.get("/get_public_key")
 async def read_item(game_id):
-    public_key = get_public_key(game_id)
+    public_key = fetch_public_key(game_id)
     return {"public_key": public_key}
 
 
@@ -32,16 +25,20 @@ async def set_location(game_id, player_id, new_location):
 
 @app.get("/get_location")
 async def get_location(game_id, player_id):
-    combined_coordinates = get_location(game_id, player_id)
-    hash_coordinates()
-    return 
+    combined_coordinates = fetch_location(game_id, player_id)
+    hashed_coord = hash_coordinates(combined_coordinates)
+    return hashed_coord
 
-@app.post("/join_lobby")
-async def join_lobby(game_id, random_number, player_id, location, unit_id):
-    store_player_data(game_id, random_number, player_id, location, unit_id)
+@app.post("/set_player_data")
+async def set_player(game_id, random_number, player_id, coordinate_x, coordinate_y, unit_id):
+    coordinates = {
+        "x": coordinate_x,
+        "y": coordinate_y
+    }
+    store_player_data(game_id, random_number, player_id, coordinates, unit_id)
     # fetch players by game id, if 3 start game
-    players = get_players(game_id)
-    if len(players) >= 3:
+    players = fetch_players(game_id)
+    if len(players) == 3:
         start_game()
 
 # @app.websocket("/ws")
@@ -55,12 +52,3 @@ async def join_lobby(game_id, random_number, player_id, location, unit_id):
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-
-# async def check_coordinates(message_coordinates):
-#     get_coordinates = read_starknet()
-
-#     if (coordinates - location_coordinates < 1):
-#         return (true)
-#     else:
-#         return (false)
