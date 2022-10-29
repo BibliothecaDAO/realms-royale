@@ -2,7 +2,7 @@
 venv
 
 # ssh key
-hackathon-fog-project.pem
+realms-royale.pem
 
 # database
 server/game_data.db
