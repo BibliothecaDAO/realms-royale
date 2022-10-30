@@ -77,7 +77,6 @@ async def set_player(body: SetPlayerBody):
 @app.get("/reset_database")
 async def reset_database():
     database_path = os.path.join(os.path.dirname(__file__), "..", "game_data.db")
-    print(os.path.isfile(database_path))
     if os.path.isfile(database_path):
         os.remove(database_path)
         return "Database has been reset"

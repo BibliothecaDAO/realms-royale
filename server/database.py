@@ -37,6 +37,7 @@ def store_new_location(
         SET COORDINATES = {encoded_coordinates}
         WHERE
             GAME_ID = {game_id}
+            AND
             PLAYER_ID = {player_id}
     """
     cur.execute(query)
