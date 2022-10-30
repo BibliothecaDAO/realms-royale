@@ -5,8 +5,6 @@ from fastapi import FastAPI, Query
 from server.decoder import hash_coordinates, calculate_movable_coordinates
 from fastapi.middleware.cors import CORSMiddleware
 from server.database import (
-    drop_tables,
-    generate_tables,
     fetch_seed,
     fetch_unit,
     start_game,
@@ -88,11 +86,11 @@ async def set_player(body: SetPlayerBody):
     # do the incrementing of players to the client
     return len(post_players)
 
-@app.get("/reset_database")
-async def reset_database():
-    drop_tables()
-    generate_tables()
-    return "Database has been reset"
+# @app.get("/reset_database")
+# async def reset_database():
+#     drop_tables()
+#     generate_tables()
+#     return "Database has been reset"
 
 
 @app.get("/")
