@@ -4,9 +4,7 @@ import hashlib
 from server.utils import decode_coordinates, encode_coordinates
 
 def hash_coordinates(seed, coordinates):
-    print(coordinates)
     encrypted_coordinates = seed * coordinates
-    print(f"encrypted coordinates: {encrypted_coordinates}")
     m = hashlib.sha256()
     b_coordinates = encrypted_coordinates.to_bytes(32, 'big')
     m.update(b_coordinates)
@@ -18,11 +16,6 @@ def hash_unitid(seed, unit_id):
     b_coordinates = encrypted_unit_id.to_bytes(32, 'big')
     m.update(b_coordinates)
     return m.hexdigest()
-
-# def verify_signature(game_id):
-#     private_key = fetch_private_key(game_id)
-#     vk = sk.get_verifying_key()
-#     vk.verify(sig, id) # True
 
 def generate_key_pair(seed):
     b_seed = seed.to_bytes(32, "big")
@@ -47,7 +40,6 @@ def calculate_movable_coordinates(seed, combined_coordinates):
     x0, y0 = decode_coordinates(combined_coordinates)
     offsets = adjacency_offsets()
     movable_coords = []
-    print(offsets)
     for offset in offsets:
         nearby_x = offset["x"] + x0
         nearby_y = offset["y"] + y0
@@ -56,18 +48,4 @@ def calculate_movable_coordinates(seed, combined_coordinates):
         encoded_nearby = encode_coordinates(nearby_x, nearby_y)
         hash_nearby = hash_coordinates(seed, encoded_nearby)
         movable_coords.append({"x": nearby_x, "y": nearby_y, "hash": hash_nearby})
-    print(movable_coords)
     return movable_coords
-
-
-if __name__ == "__main__":
-    # x = 2
-    # y = 1
-    # coordinates = x * 10000 + y
-    # hash_coordinates(123, coordinates)
-    # hash_unitid(123, 0)
-    # generate_key_pair(123)
-    # coord_offsets = adjacency_offsets()
-    # hash_coordinates(
-    # print(adjacency_offsets())
-    calculate_movable_coordinates(5, 00000)

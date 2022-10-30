@@ -60,9 +60,6 @@ async def get_unit(game_id, player_id):
 
 @app.post("/set_player_data")
 async def set_player(body: SetPlayerBody):
-    # pre_players = fetch_players(body.game_id)
-    # if len(players) > 3:
-    #     print("FAIL: Players already exist")
     await store_player_data(**body.dict())
     # fetch players by game id, if 3 start game
     players = fetch_players(body.game_id)
@@ -72,13 +69,6 @@ async def set_player(body: SetPlayerBody):
             random_number = player[1]
             random_numbers.append(random_number)
         start_game(body.game_id, *random_numbers)
-
-# @app.websocket("/ws")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     while True:
-#         data = await websocket.receive_()
-#         await websocket.send_text(f"Message text was: {data}")
 
 
 @app.get("/")

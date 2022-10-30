@@ -66,14 +66,7 @@ def start_game(
         random_3: int
     ):
     seed = random_1 * random_2 * random_3
-    print(seed)
     private_key, public_key = generate_key_pair(seed)
-    print(private_key)
-    # query = f"""
-    #     INSERT INTO GAME_KEY (GAME_ID, SEED, PRIVATE_KEY, PUBLIC_KEY) 
-    #     VALUES 
-    #     ({game_id}, {seed}, {private_key}, {public_key});
-    # """
     query = f"""
         INSERT INTO GAME_KEY (GAME_ID, SEED, PRIVATE_KEY, PUBLIC_KEY) 
         VALUES (?,?,?,?);
@@ -138,5 +131,3 @@ def fetch_unit(
 
 if __name__ == "__main__":
     generate_tables()
-    # print(fetch_players(1))
-    # start_game(1, 3, 5, 6)
