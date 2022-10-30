@@ -1,6 +1,6 @@
 import sqlite3
 from server.decoder import generate_key_pair
-from server.utils import encode_coordinates
+from server.utils import decode_coordinates, encode_coordinates
 from server.models import *
 
 con = sqlite3.connect("game_data.db")
@@ -136,9 +136,10 @@ def fetch_player_at_location(game_id: int, coordinates: int):
     cur.execute(query)
     player_coordinates = cur.fetchone()
     if player_coordinates:
-        return 1
+        x, y = decode_coordinates(player_coordinates[0])
+        return (x, y)
     else:
-        return 0
+        return None
 
 
 if __name__ == "__main__":

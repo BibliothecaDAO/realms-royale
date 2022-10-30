@@ -53,7 +53,8 @@ async def get_player_locations(game_id: int, coordinates: List[int] = Query(None
     at_locations = []
     for coordinate in coordinates:
         at_location = fetch_player_at_location(game_id, coordinate)
-        at_locations.append(at_location)
+        if at_location:
+            at_locations.append(at_location)
     return at_locations
 
 @app.get("/get_moveable_locations")
