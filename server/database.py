@@ -44,9 +44,9 @@ def store_new_location(
     
 
 async def store_player_data(
+    player_id: int,
     game_id: int,
     random_number: int,
-    player_id: int,
     location: Location,
     unit_id: int,
 ):

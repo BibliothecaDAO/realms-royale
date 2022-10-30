@@ -12,6 +12,5 @@ class SetLocationBody(BaseModel):
 class SetPlayerBody(BaseModel):
     game_id: int
     random_number: int
-    player_id: int
     location: Location
     unit_id: int

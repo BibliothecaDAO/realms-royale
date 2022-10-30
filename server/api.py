@@ -50,7 +50,6 @@ async def get_movable_locations(game_id, player_id):
     movable_coordinates = calculate_movable_coordinates(seed, combined_coordinates)
     return (movable_coordinates)
 
-
 @app.get("/get_unit")
 async def get_unit(game_id, player_id):
     unit_id = fetch_unit(game_id, player_id)
@@ -60,15 +59,19 @@ async def get_unit(game_id, player_id):
 
 @app.post("/set_player_data")
 async def set_player(body: SetPlayerBody):
-    await store_player_data(**body.dict())
+    pre_players = fetch_players(body.game_id)
+    player_id = len(pre_players) + 1
+    await store_player_data(player_id, **body.dict())
     # fetch players by game id, if 3 start game
-    players = fetch_players(body.game_id)
-    if len(players) == 3:
+    post_players = fetch_players(body.game_id)
+    if len(post_players) == 3:
         random_numbers = []
-        for player in players:
+        for player in post_players:
             random_number = player[1]
             random_numbers.append(random_number)
         start_game(body.game_id, *random_numbers)
+    # do the incrementing of players to the client
+    return len(post_players)
 
 
 @app.get("/")
