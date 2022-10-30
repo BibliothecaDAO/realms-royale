@@ -15,14 +15,3 @@ class SetPlayerBody(BaseModel):
     player_id: int
     location: Location
     unit_id: int
-
-class GetLocationBody(BaseModel):
-    game_id: int
-    player_id: int
-
-class GetPublicKeyBody(BaseModel):
-    game_id: int
-
-class GetMovableLocationsBody(BaseModel):
-    game_id: int
-    player_id: int

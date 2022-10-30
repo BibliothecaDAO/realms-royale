@@ -21,8 +21,8 @@ def generate_tables():
         CREATE TABLE GAME_KEY
         (GAME_ID INT,
         SEED INT,
-        PRIVATE_KEY CHAR(255),
-        PUBLIC_KEY CHAR(255));
+        PRIVATE_KEY TEXT,
+        PUBLIC_KEY TEXT);
     """
     cur.execute(query)
 
@@ -59,12 +59,34 @@ async def store_player_data(
     cur.execute(query)
     con.commit()
 
+def start_game(
+        game_id: int, 
+        random_1: int, 
+        random_2: int, 
+        random_3: int
+    ):
+    seed = random_1 * random_2 * random_3
+    print(seed)
+    private_key, public_key = generate_key_pair(seed)
+    print(private_key)
+    # query = f"""
+    #     INSERT INTO GAME_KEY (GAME_ID, SEED, PRIVATE_KEY, PUBLIC_KEY) 
+    #     VALUES 
+    #     ({game_id}, {seed}, {private_key}, {public_key});
+    # """
+    query = f"""
+        INSERT INTO GAME_KEY (GAME_ID, SEED, PRIVATE_KEY, PUBLIC_KEY) 
+        VALUES (?,?,?,?);
+    """
+    cur.execute(query, (game_id, seed, private_key, public_key))
+    con.commit()
+
 def fetch_players(game_id: int):
     query = f"""
-        SELECT PLAYER_ID FROM GAME_DATA WHERE GAME_ID={game_id}
+        SELECT PLAYER_ID, RANDOM_NUMBER FROM GAME_DATA WHERE GAME_ID={game_id}
     """
     cur.execute(query)
-    players = cur.fetchmany()
+    players = cur.fetchall()
     return players
 
 def fetch_seed(game_id: int):
@@ -73,7 +95,7 @@ def fetch_seed(game_id: int):
     """
     cur.execute(query)
     seed = cur.fetchone()
-    return seed
+    return seed[0]
 
 def fetch_public_key(game_id: int):
     query = f"""
@@ -113,21 +135,8 @@ def fetch_unit(
     coordinates = cur.fetchone()
     return coordinates
 
-async def start_game(
-        game_id: int, 
-        random_1: int, 
-        random_2: int, 
-        random_3: int
-    ):
-    seed = random_1 * random_2 * random_3
-    private_key, public_key = generate_key_pair(seed)
-    query = f"""
-        INSERT INTO GAME_KEY (GAME_ID, SEED, PRIVATE_KEY, PUBLIC_KEY) 
-        VALUES 
-        ({game_id}, {seed}, {private_key}, {public_key});
-    """
-    cur.execute(query)
-
 
 if __name__ == "__main__":
     generate_tables()
+    # print(fetch_players(1))
+    # start_game(1, 3, 5, 6)

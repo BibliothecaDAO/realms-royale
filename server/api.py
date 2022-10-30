@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/get_public_key")
+@app.get("/get_public_key")
 async def read_item(game_id):
     public_key = fetch_public_key(game_id)
     return {"public_key": public_key}
@@ -36,22 +36,22 @@ async def read_item(game_id):
 async def set_location(body: SetLocationBody):
     store_new_location(**body.dict())
 
-@app.post("/get_location")
-async def get_location(body: GetLocationBody):
-    combined_coordinates = fetch_location(**body.dict())
-    seed = fetch_seed(body.game_id)
+@app.get("/get_location")
+async def get_location(game_id, player_id):
+    combined_coordinates = fetch_location(game_id, player_id)
+    seed = fetch_seed(game_id)
     hashed_coord = hash_coordinates(seed, combined_coordinates)
     return hashed_coord
 
-@app.post("/get_moveable_locations")
-async def get_movable_locations(body: GetMovableLocationsBody):
-    combined_coordinates = fetch_location(**body.dict())
+@app.get("/get_moveable_locations")
+async def get_movable_locations(game_id, player_id):
+    combined_coordinates = fetch_location(game_id, player_id)
     seed = fetch_seed(body.game_id)
     movable_coordinates = calculate_movable_coordinates(seed, combined_coordinates)
     return (movable_coordinates)
 
 
-@app.post("/get_unit")
+@app.get("/get_unit")
 async def get_unit(game_id, player_id):
     unit_id = fetch_unit(game_id, player_id)
     seed = fetch_seed()
@@ -60,11 +60,18 @@ async def get_unit(game_id, player_id):
 
 @app.post("/set_player_data")
 async def set_player(body: SetPlayerBody):
+    # pre_players = fetch_players(body.game_id)
+    # if len(players) > 3:
+    #     print("FAIL: Players already exist")
     await store_player_data(**body.dict())
     # fetch players by game id, if 3 start game
     players = fetch_players(body.game_id)
     if len(players) == 3:
-        start_game()
+        random_numbers = []
+        for player in players:
+            random_number = player[1]
+            random_numbers.append(random_number)
+        start_game(body.game_id, *random_numbers)
 
 # @app.websocket("/ws")
 # async def websocket_endpoint(websocket: WebSocket):

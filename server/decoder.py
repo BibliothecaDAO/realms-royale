@@ -31,8 +31,6 @@ def generate_key_pair(seed):
     private_key = sk.to_string().hex()
     vk = sk.get_verifying_key()
     public_key = vk.to_string().hex()
-    print(private_key)
-    print(public_key)
     return private_key, public_key
 
 def adjacency_offsets():
