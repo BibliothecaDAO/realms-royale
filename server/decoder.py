@@ -37,8 +37,9 @@ def adjacency_offsets():
     movables = []
     for x in range(-1, 2):
         for y in range(-1, 2):
+            print(y)
             if (x == 0 and y == 0):
-                break
+                continue
             movables.append({ "x": x, "y": y})
     return movables
 
@@ -46,6 +47,7 @@ def calculate_movable_coordinates(seed, combined_coordinates):
     x0, y0 = decode_coordinates(combined_coordinates)
     offsets = adjacency_offsets()
     movable_coords = []
+    print(offsets)
     for offset in offsets:
         nearby_x = offset["x"] + x0
         nearby_y = offset["y"] + y0
@@ -54,6 +56,7 @@ def calculate_movable_coordinates(seed, combined_coordinates):
         encoded_nearby = encode_coordinates(nearby_x, nearby_y)
         hash_nearby = hash_coordinates(seed, encoded_nearby)
         movable_coords.append({"x": nearby_x, "y": nearby_y, "hash": hash_nearby})
+    print(movable_coords)
     return movable_coords
 
 
@@ -66,4 +69,5 @@ if __name__ == "__main__":
     # generate_key_pair(123)
     # coord_offsets = adjacency_offsets()
     # hash_coordinates(
-    calculate_movable_coordinates(5, 10000)
+    # print(adjacency_offsets())
+    calculate_movable_coordinates(5, 00000)
