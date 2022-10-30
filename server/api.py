@@ -5,6 +5,7 @@ from fastapi import FastAPI, Query
 from server.decoder import hash_coordinates, calculate_movable_coordinates
 from fastapi.middleware.cors import CORSMiddleware
 from server.database import (
+    drop_tables,
     generate_tables,
     fetch_seed,
     fetch_unit,
@@ -89,13 +90,9 @@ async def set_player(body: SetPlayerBody):
 
 @app.get("/reset_database")
 async def reset_database():
-    database_path = os.path.join(os.path.dirname(__file__), "..", "game_data.db")
-    if os.path.isfile(database_path):
-        os.remove(database_path)
-        generate_tables()
-        return "Database has been reset"
-    else:
-        return "No database"
+    drop_tables()
+    generate_tables()
+    return "Database has been reset"
 
 
 @app.get("/")

@@ -25,6 +25,18 @@ def generate_tables():
         PUBLIC_KEY TEXT);
     """
     cur.execute(query)
+    con.commit()
+
+def drop_tables():
+    query = """
+        DROP TABLE IF EXISTS GAME_DATA
+    """
+    cur.execute(query)
+    query = """
+        DROP TABLE IF EXISTS GAME_KEY
+    """
+    cur.execute(query)
+    con.commit()
 
 def store_new_location(
     game_id: int,
