@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from server.decoder import hash_coordinates, calculate_movable_coordinates
 from fastapi.middleware.cors import CORSMiddleware
@@ -72,6 +73,22 @@ async def set_player(body: SetPlayerBody):
         start_game(body.game_id, *random_numbers)
     # do the incrementing of players to the client
     return len(post_players)
+
+@app.get("/reset_database")
+async def reset_database():
+    database_path = os.path.join(os.path.dirname(__file__), "..", "game_data.db")
+    print(os.path.isfile(database_path))
+    if os.path.isfile(database_path):
+        os.remove(database_path)
+        return "Database has been reset"
+    else:
+        return "Database is empty"
+
+
+# @app.get("/verify_key")
+# async def verify_key(public_key):
+#     key_int = int(public_key)
+#     sig = sk.sign
 
 
 @app.get("/")
