@@ -46,7 +46,7 @@ async def get_location(game_id, player_id):
 @app.get("/get_moveable_locations")
 async def get_movable_locations(game_id, player_id):
     combined_coordinates = fetch_location(game_id, player_id)
-    seed = fetch_seed(body.game_id)
+    seed = fetch_seed(game_id)
     movable_coordinates = calculate_movable_coordinates(seed, combined_coordinates)
     return (movable_coordinates)
 
