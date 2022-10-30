@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from server.decoder import hash_coordinates, calculate_movable_coordinates
 from fastapi.middleware.cors import CORSMiddleware
 from server.database import (
+    generate_tables,
     fetch_seed,
     fetch_unit,
     start_game,
@@ -10,9 +11,10 @@ from server.database import (
     fetch_players,
     fetch_public_key,
     store_new_location,
-    fetch_location
+    fetch_location,
+    fetch_player_at_location
 )
-from server.utils import decode_coordinates
+from server.utils import decode_coordinates, encode_coordinates
 from server.models import *
 
 app = FastAPI()
@@ -44,12 +46,21 @@ async def get_location(game_id, player_id):
     hashed_coord = hash_coordinates(seed, combined_coordinates)
     return hashed_coord
 
+# @app.get("/get_player_locations")
+# async def get_player_locations(coordinates):
+#     at_locations = []
+#     for coordinate in coordinates:
+#         encoded_coordinates = encode_coordinates(coordinate["x"], coordinate["y"])
+#         at_location = fetch_player_at_location(encoded_coordinates)
+#         at_locations.append(at_location)
+#     return at_locations
+
 @app.get("/get_moveable_locations")
 async def get_movable_locations(game_id, player_id):
     combined_coordinates = fetch_location(game_id, player_id)
     seed = fetch_seed(game_id)
     movable_coordinates = calculate_movable_coordinates(seed, combined_coordinates)
-    return (movable_coordinates)
+    return movable_coordinates
 
 @app.get("/get_unit")
 async def get_unit(game_id, player_id):
@@ -79,9 +90,10 @@ async def reset_database():
     database_path = os.path.join(os.path.dirname(__file__), "..", "game_data.db")
     if os.path.isfile(database_path):
         os.remove(database_path)
+        generate_tables()
         return "Database has been reset"
     else:
-        return "Database is empty"
+        return "No database"
 
 
 # @app.get("/verify_key")

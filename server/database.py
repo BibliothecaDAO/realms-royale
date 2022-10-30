@@ -129,6 +129,15 @@ def fetch_unit(
     coordinates = cur.fetchone()
     return coordinates
 
+# def fetch_player_at_location(coordinates: str):
+#     query = f"""
+#         SELECT COORDINATES FROM GAME_DATA WHERE COORDINATES={coordinates}
+#     """
+#     cur.execute(query)
+
+#     at_location = cur.fetchone()
+#     return at_location
+
 
 if __name__ == "__main__":
     generate_tables()
