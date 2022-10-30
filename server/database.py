@@ -129,14 +129,16 @@ def fetch_unit(
     coordinates = cur.fetchone()
     return coordinates
 
-# def fetch_player_at_location(coordinates: str):
-#     query = f"""
-#         SELECT COORDINATES FROM GAME_DATA WHERE COORDINATES={coordinates}
-#     """
-#     cur.execute(query)
-
-#     at_location = cur.fetchone()
-#     return at_location
+def fetch_player_at_location(game_id: int, coordinates: int):
+    query = f"""
+        SELECT COORDINATES FROM GAME_DATA WHERE GAME_ID={game_id} AND COORDINATES={coordinates}
+    """
+    cur.execute(query)
+    player_coordinates = cur.fetchone()
+    if player_coordinates:
+        return 1
+    else:
+        return 0
 
 
 if __name__ == "__main__":

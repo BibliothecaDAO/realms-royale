@@ -1,3 +1,4 @@
+from fastapi import Query
 from pydantic import BaseModel
 
 class Location(BaseModel):

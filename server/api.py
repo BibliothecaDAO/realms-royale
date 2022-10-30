@@ -1,5 +1,7 @@
+from typing import List, Tuple
+from multiprocessing.dummy import Array
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from server.decoder import hash_coordinates, calculate_movable_coordinates
 from fastapi.middleware.cors import CORSMiddleware
 from server.database import (
@@ -46,14 +48,13 @@ async def get_location(game_id, player_id):
     hashed_coord = hash_coordinates(seed, combined_coordinates)
     return hashed_coord
 
-# @app.get("/get_player_locations")
-# async def get_player_locations(coordinates):
-#     at_locations = []
-#     for coordinate in coordinates:
-#         encoded_coordinates = encode_coordinates(coordinate["x"], coordinate["y"])
-#         at_location = fetch_player_at_location(encoded_coordinates)
-#         at_locations.append(at_location)
-#     return at_locations
+@app.get("/get_player_locations")
+async def get_player_locations(game_id: int, coordinates: List[int] = Query(None)):
+    at_locations = []
+    for coordinate in coordinates:
+        at_location = fetch_player_at_location(game_id, coordinate)
+        at_locations.append(at_location)
+    return at_locations
 
 @app.get("/get_moveable_locations")
 async def get_movable_locations(game_id, player_id):
@@ -94,12 +95,6 @@ async def reset_database():
         return "Database has been reset"
     else:
         return "No database"
-
-
-# @app.get("/verify_key")
-# async def verify_key(public_key):
-#     key_int = int(public_key)
-#     sig = sk.sign
 
 
 @app.get("/")
